@@ -1,6 +1,7 @@
 # lab9-starter
 
 Names
+
 Function   | Open Addressing | Seperate Chaining
 --------   | --------------- | -----------------
 stl::hash  |      93         |        72
@@ -9,6 +10,7 @@ RSHash     |      93         |        72
 JSHash     |      93         |        72
 
 RandomWords
+
 Function   | Open Addressing | Seperate Chaining
 --------   | --------------- | -----------------
 stl::hash  |      0          |        0
