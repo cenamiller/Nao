@@ -1,3 +1,6 @@
+//Aisha Balogun Mohammed 
+//17th November 2017
+
 //Created: Rafe Cooley 11/13/2017
 // HashTable Class main file
 // - this class will keep track of two different hash tables each using a different type of collision avoidance method
@@ -24,8 +27,24 @@ void HashTables::addToTables(unint inputHash, std::string text){
 // - increment inputHash
 // - and recurse to next spot
 // else add new openBucket to position
-void HashTables::addToOpenAddress(unint inputHash, std::string text){
-
+void HashTables::addToOpenAddress(unint inputHash, std::string text)
+{
+	auto look = openAddressTable.find(inputHash);
+	if (look !=openAddressTable.end())
+	{
+		openAddressTable[inputHash].collision = true;
+		inputHash++;
+		openCollisions++;
+		addToOpenAddress(inputHash,text);
+	}
+	
+	else
+	{
+		openBucket myBucket;
+		myBucket.collision = false;
+		myBucket.entry_ = text;
+		openAddressTable[inputHash] = myBucket;
+	}
 }
 
 //TODO
@@ -35,15 +54,31 @@ void HashTables::addToOpenAddress(unint inputHash, std::string text){
 // - edit collision boolean for current location
 // - add to linked list
 // else add new chainBucket to position
-void HashTables::addToChaining(unint inputHash, std::string text){
-
+void HashTables::addToChaining(unint inputHash, std::string text)
+{
+	auto look = chainingTable.find(inputHash);
+	if (look !=chainingTable.end())
+	{
+		
+		chainingTable[inputHash].collision = true;
+		chainedCollisions++;
+		chainingTable[inputHash].bucketList->insertAsLast(text);
+	}
+		else 
+	{
+		chainBucket myBucket;
+		myBucket.bucketList = new List();
+		myBucket.collision = false;
+		myBucket.bucketList->insertAsLast(text);
+		chainingTable[inputHash] = myBucket;
+	}
 }
 
 // prints a collision report
 void HashTables::CollisionReport(){
   cout << "--------- Collision Report  ---------" << endl;
   cout << ">Open Addressing Table has   [" << openCollisions << "] collisions" << endl;
-  cout << ">Separate Chaining Table has [" << openCollisions << "] collisions" << endl;
+  cout << ">Separate Chaining Table has [" << chainedCollisions << "] collisions" << endl;
   cout << "-----------  End Report  ------------" << endl << endl;
 }
 
