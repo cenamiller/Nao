@@ -1,0 +1,84 @@
+topic: ~MedicalDialog()
+language: enu
+
+# Defining needed concepts, keywords or sentences corresponding to a concept.
+concept:(hi) [hello hi hey "good morning" greetings howdy wassup yo "good afternoon"]
+concept:(how) ["how are you" "what's up" "how do you feel"]
+concept:(yes) [yes "all right" sure "why not" ok okey dokie certainly "very well" yep yea yup definitely amen yeah "you bet" "go ahead" okay]
+concept:(no) [no nope "don't want" "no way" never "not at all" nah pass]
+concept:(happy) [ok fine great happy blessed "all right" glad "not bad"]
+concept:(sad) [sad miserable bad unhappy tired "not good" "not fine" "not great" "been better" "not well" "not okay"]
+concept:(repeat) [repeat understand what pardon]
+concept:(thx) ["thank you" thanks gracias "much obliged" merci]
+concept:(bye) [goodbye "bye bye" "tata" "see you" adios cheerio "so long" farewell "have a nice day"]
+concept:(flu) [cold flu "flu shot"]
+concept:(injection) [injection shot immunization needle syringe]
+concept:(checkUp) ["check up" ]
+concept:(nothing) [nothing]
+# Start/Wait animation, Goto.
+# If User expresses a word or a sentence found in the concept "hello",
+# the robot starts Hey_1 animation, answers a random value defined in concept "hi"
+# and waits for the end of the animation before going to the label how. Label is expressed this way: %howAreYou
+#u:(~hi) ^start(animations/Stand/Gestures/Hey_1) Hi there, my name is Guren, ^wait(animations/Stand/Gestures/Hey_1) ^goto(howAreYou)
+
+
+proposal: %hospital ^startTag(you) What brings you to the hospital today? ^waitTag(you) 
+    u1:(~flu)
+    u1:(~injection)
+    u1:(~checkUp)
+    u1:(~nothing)
+
+# Tag animation.
+# If User asks how the robot feels, it starts a random animation being tagged "myself",
+# answers and go to the label %howAreYou
+u:(~how) ^startTag(myself) I'm fine, thank you. And you,? ^waitTag(myself) ^goto(howAreYou)
+
+# %Label.
+# The robot asks how the user feels. 3 kind of answers are expected
+# Expressed by concept, user can be happy, sad or ask the robot to repeat the question.
+proposal: %howAreYou ^startTag(show) how are you today?
+    u1:(~happy) I'm glad to hear you are fine! ^goto(GuessWhat)
+    u1:(["not fine" "not good" "not great" bad "not well" "not okay"]) Oh, I am sorry to hear that,. If you feel like talking about it, don't hesitate,. ^goto(GuessWhat)
+    u1:(~repeat) I'll repeat for you. ^sameProposal
+  
+
+proposal: %GuessWhat, Guess what, I am a robot and, I will be assisting you, with your medical visit today,. I will be here with you, so you feel better,. Are you frightened about the procedure,?
+    u1:(~yes) ^startTag(myself) There is no need to be scared, I remember I used to be scared to come to hospitals before, until I discovered a trick,. ^waitTag(myself) ^goto(trick)
+    u1:(~no) ^start(Stand/Emotions/Positive/Relieved_1)That is great,! ^wait(Stand/Emotions/Positive/Relieved_1) Let us go through the procedure together,.  Follow my lead. $onInjection = 1 ^goto(goodJob)
+    
+proposal: %trick Should I share my trick with you,?
+    u1:(~yes) ^startTag(myself) Whenever I get nervous or scared, I take three deep breaths, and it always calms me down,. Let us take three deep breaths together, and I am sure you will feel better about it,. ^waitTag(myself) $onBreathe=1 Sometimes, listening to music also makes me feel better, ^goto(guitar)
+    u1:(~no) Okay, I guess I would save my trick for another time then,. Sometimes, listening to music also makes me feel better, ^goto(guitar) 
+
+proposal: %guitar would you like me to play the guitar for you,? 
+    u1:(~no) Too bad, I was low key looking forward to showing off my guitar skills., Anyways, how about we go through the procedure together,. Follow my lead. $onInjection = 1 ^goto(goodJob)
+    u1:(~yes) I am not the best at the guitar, but I am pretty okay. I hope you enjoy this, ^run(Stand/Waiting/AirGuitar_1) ^goto(postGuitar) 
+    
+proposal: %postGuitar Did that make you feel any better? 
+    u1:(~no) ^start(Stand/Gestures/Thinking_3) hmm, that always does the trick for me,. ^wait(Stand/Gestures/Thinking_3) Not to worry, I have one more trick up my sleeves. How about we do the procedure together,. Follow my lead. $onInjection = 1 ^goto(goodJob)
+    u1: (~yes)  ^start(Stand/Emotions/Positive/Happy_1) I am really glad I was able to make you feel relaxed ^wait(Stand/Emotions/Positive/Happy_1) Now, it is time to go through the procedure,. Just do as I do and you would be fine,. $onInjection = 1 ^goto(goodJob)
+
+proposal: %goodJob ^start(Stand/Gestures/Applause_1) Great job., I am really proud of you., you did really good,.^wait(Stand/Gestures/Applause_1) give me a High Five,! $onHighFive = 1 ^goto(picture)
+
+proposal: %picture ^start(Stand/Gestures/You_5) well, it was really nice to meet you., may i take a picture of you before you leave? ^wait(Stand/Gestures/You_5)
+    u1:(~yes) ^start(Stand/Waiting/TakePicture_1) Okey Dokie, I hope this would help me remember you if we meet again,. ^wait(Stand/Waiting/TakePicture_1) ^goto(bye)
+    u1:(~no) Okay then,. ^goto(bye)
+
+# On any proposal if user asks to repeat, say again the same proposal.
+    u:(~repeat) I'll repeat what I just said,. ^sameProposal
+
+# Being polite, the robot always answers accordingly to thankfull sentences.
+    u:(~thx) You're welcome
+    
+# Exiting.
+# Answering to Goodbye and exiting the dialog box, stimulating the onStopped output slot.
+proposal: %bye ~bye $onStopped=1
+
+    u:(~bye) ~bye
+    
+# Responding to events.
+# Here, if the left foot bumper is pressed, the robot starts an animation,
+# say a text and waits for the end of the animation.
+    u:(e:LeftBumperPressed) ^start(animations/Stand/Gestures/YouKnowWhat_1) My left foot bumped into something! ^wait(animations/Stand/Gestures/YouKnowWhat_1)
+
+    u:(e:RightBumperPressed) ^start(animations/Stand/Gestures/YouKnowWhat_1) My right foot bumped into something! ^wait(animations/Stand/Gestures/YouKnowWhat_1)
