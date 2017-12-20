@@ -1,0 +1,87 @@
+topic: ~MedicalDialog()
+language: enu
+
+# Defining needed concepts, keywords or sentences corresponding to a concept.
+concept:(hi) [hello hi hey "good morning" greetings howdy wassup yo "good afternoon"]
+concept:(how) ["how are you" "what's up" "how do you feel"]
+concept:(yes) [yes "all right" sure "why not" ok okey dokie certainly "very well" yep yea yup definitely amen yeah "you bet" "go ahead" okay]
+concept:(no) [no nope "don't want" "no way" never "not at all" nah pass]
+concept:(happy) [ok fine great happy blessed "all right" glad "not bad"]
+concept:(sad) [sad miserable bad unhappy tired "not good" "not fine" "not great" "been better" "not well" "not okay"]
+concept:(repeat) [repeat understand what pardon]
+concept:(thx) ["thank you" thanks gracias "much obliged" merci]
+concept:(bye) [goodbye "bye bye" "tata" "see you" adios cheerio "so long" farewell "have a nice day"]
+
+concept:(flu) [cold flu "flu shot"]
+concept:(injection) [injection shot immunization needle syringe]
+concept:(checkUp) ["check up" ]
+concept:(nothing) [nothing]
+# Start/Wait animation, Goto.
+# If User expresses a word or a sentence found in the concept "hello",
+# the robot starts Hey_1 animation, answers a random value defined in concept "hi"
+# and waits for the end of the animation before going to the label how. Label is expressed this way: %howAreYou
+
+
+u:(~hi) ^start(animations/Stand/Gestures/Hey_1) Hi there, my name is Guren, I am a robot and, I will be assisting you, with your medical visit today,. I will be here with you, so you feel better,.^wait(animations/Stand/Gestures/Hey_1) ^goto(hospital)
+
+u:(~how) ^startTag(myself) I am fine, thank you for asking,! ^waitTag(myself) ^goto(hospital)
+
+proposal: %hospital ^startTag(you) What brings you to the hospital today? ^waitTag(you) 
+    u1:(~flu) ^goto(Flu)
+    u1:(~injection) ^goto(injection)
+    u1:(~checkUp) ^goto(checkUp)
+    u1:(~nothing) ^goto(noHospital)
+    
+proposal: ^start(animations/Stand/Gestures/You_1) %Flu I am sorry to hear that you are down with the flu, would you be receiving a shot today, ^wait(animations/Stand/Gestures/You_1)
+    u1:(~yes) That is good, I am confident that you would feel better in no time, after receiving a flu shot.,  ^goto(Flu_shot)
+    u1:(~no) Oh, Okay,  ^goto(drugs)
+    
+proposal: %drugs well, would you be prescribed some medication so you get better?
+    u1:(~yes) ^startTag(myself) Medication helps people get better, so I am glad that you will be taking some medication, because I want to see you get better soon, ^waitTag(myself) ^goto(take_drugs)
+    u1:(~no) Oh okay.,  ^goto(take_drugs)
+    
+proposal: %take_drugs Do you like taking drugs?
+    u1: (~yes) That is interesting, I have not met someone who likes to take drugs before, anyways, I guess that works out just fine for you, since  no drug was prescribed for you today,. Listening to music always makes me feel better ^goto(guitar)
+    u1:(~no) ^startTag(myself) Me neither, but drugs make you feel better, so you should always do your best to take them, as prescribed by your doctor, Another thing that makes me feel better, is listening to music^waitTag(myself) ^goto(guitar)
+    
+proposal: %Flu_^startTag(you)shot Are you freightened about the procedure? ^waitTag(you)
+    u1:(~yes) ^startTag(myself) There is no need to be freightened, I remember I used to be afraid of taking Flu shots before, until I discovered a trick,. ^waitTag(myself) ^goto(trick)
+    u1:(~no) ^start(Stand/Emotions/Positive/Relieved_1)That is great,! ^wait(Stand/Emotions/Positive/Relieved_1) I bet you it would be over before you know it, ^goto(goodJob)
+    
+proposal: %trick ^startTag(myself) Should I share my trick with you,? ^waitTag(myself)
+    u1:(~yes) ^startTag(myself) Whenever I get nervous or scared, I take three deep breaths, and it always calms me down,. Take three deep breaths, and I am sure you will feel better about it,. ^waitTag(myself) Sometimes, listening to music also makes me feel better, ^goto(guitar)
+    u1:(~no) Okay, I guess I would save my trick for another time then,. Sometimes, listening to music makes me feel better, ^goto(guitar) 
+
+proposal: %guitar ^startTag(myself) would you like me to play the guitar for you? ^waitTag(myself)
+    u1:(~no) Too bad, I was low key looking forward to showing off my guitar skills., ^goto(picture)
+    u1:(~yes) I am not the best at the guitar, but I am pretty okay, I hope you enjoy this, ^run(Stand/Waiting/AirGuitar_1) ^goto(postGuitar) 
+    
+proposal: %postGuitar Did that make you feel any better? 
+    u1:(~no) ^start(Stand/Gestures/Thinking_3) hmm, that always does the trick for me,.  ^wait(Stand/Gestures/Thinking_3)  ^goto(picture)
+    u1: (~yes)  ^start(Stand/Emotions/Positive/Happy_1) ^wait(Stand/Emotions/Positive/Happy_1) I am really glad that I was able to make you feel better,  ^goto(picture)
+
+proposal: %goodJob ^start(Stand/Gestures/Applause_1) Great job., I am really proud of you., you did really good,.^wait(Stand/Gestures/Applause_1) 
+^goto(picture)
+
+proposal: %picture ^start(Stand/Gestures/You_5) well, it was really nice to meet you and I hope you get well soon, may i take a picture of you before you leave? ^wait(Stand/Gestures/You_5)
+    u1:(~yes) ^start(Stand/Waiting/TakePicture_1) Okey Dokie,^wait(Stand/Waiting/TakePicture_1) I hope this would help me remember you if we meet again,. ^goto(bye)
+    u1:(~no) ^goto(bye)
+
+# On any proposal if user asks to repeat, say again the same proposal.
+    u:(~repeat) I'll repeat what I just said,. ^sameProposal
+
+# Being polite, the robot always answers accordingly to thankfull sentences.
+    u:(~thx) You're welcome
+    
+# Exiting.
+# Answering to Goodbye and exiting the dialog box, stimulating the onStopped output slot.
+proposal: %bye bye, have a good rest of your day 
+
+u:(~bye) bye, have a good rest of your day
+    
+# Responding to events.
+# Here, if the left foot bumper is pressed, the robot starts an animation,
+# say a text and waits for the end of the animation.
+    #u:(e:LeftBumperPressed) ^start(animations/Stand/Gestures/YouKnowWhat_1) My left foot bumped into something! ^wait(animations/Stand/Gestures/YouKnowWhat_1)
+
+  #  u:(e:RightBumperPressed) ^start(animations/Stand/Gestures/YouKnowWhat_1) My right foot bumped into something! ^wait(animations/Stand/Gestures/YouKnowWhat_1)
