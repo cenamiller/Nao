@@ -1,0 +1,90 @@
+topic: ~ExampleDialog()
+language: enu
+
+# Defining needed concepts, keywords or sentences corresponding to a concept.
+concept:(yes) [yes "all right" sure "why not" ok okey dokie certainly "very well" yep yea yup definitely amen yeah "you bet" "go ahead" okay]
+concept:(no) [no nope "don't want" "no way" never "not at all" nah pass]
+concept:(how) ["how are you" howdy "what's up" "how do you feel"]
+concept:(happy) [ok fine great happy blessed "all right" glad "not bad"]
+concept:(sad) [sad miserable bad unhappy tired "not good" "not fine" "not great" "been better" "not well" "not okay"]
+concept:(repeat) [repeat understand]
+concept:(thx) ["thank you" thanks gracias "much obliged" merci]
+concept:(hi) [hello hi hey "good morning" greetings]
+concept:(bye) [bye goodbye "bye bye" "tata" "see you" adios cheerio "so long" farewell "have a nice day"]
+concept:(younger) [one two three four five six seven]
+concept: (older) [eight nine ten eleven twelve thirteen fourteen fiveteen sixteen]
+
+# Start/Wait animation, Goto.
+# If User expresses a word or a sentence found in the concept "hello",
+# the robot starts Hey_1 animation, answers a random value defined in concept "hello"
+# and waits for the end of the animation before going to the label how. Label is expressed this way: %howAreYou
+
+u:(~hi) ^start(animations/Stand/Gestures/Hey_1) Hi there, my name is Guren, ^wait(animations/Stand/Gestures/Hey_1) ^goto(GuessWhat)
+
+u:(~how) ^startTag(myself) I am fine, thank you for asking,! ^waitTag(myself) ^goto(GuessWhat)
+
+
+proposal: %GuessWhat Guess what, I am a robot and, I will be keeping you company while you wait to see a doctor. How old are you?
+
+    u1:(~younger) ^goto(sing)
+    u1:(~older) ^goto(game)
+
+proposal: %game Would you like to play a game?
+    u1:(~yes) ^start(Stand/Emotions/Positive/Happy_1) ^wait(Stand/Emotions/Positive/Happy_1) Sweet! We are going to play a game of riddles. ^wait(animations/Stand/Gestures/Hey_1)  ^goto(riddles)
+    u1:(~no) ^run(StandEmotionsNegativeSad_1) ^goto(guitar)
+
+proposal: %riddles I am going to descibe a word or a phrase and you are going to guess what that word or phrase is. If you want me to repeat, just say repeat. If you are struggling to figure the word out, say the word hint, and I would give you more hints that may help you solve the riddle! If you still can not figure it out, and would like to move on to the next riddle, say the word next, Do you understand how the game works?
+    u1:(~yes) Good! Now let us begin. ^goto(riddle1)
+    u1:(~no) Okay, I would repeat the rules of the game for you. ^sameProposal
+    
+proposal: %riddle1 Mary's mother has three daughters. One is called Lara, and the other one is Sara. What is the name of the third daughter?
+    u1:(Mary) ^start(Stand/Gestures/Applause_1) That is correct, moving on to the next riddle  ^wait(Stand/Gestures/Applause_1) ^goto(riddle2)  
+    u1:(hint) I mentioned three names ^goto(riddle1)
+    u1:(next) The answer to this riddle is Mary. I said Mary's mother has three daughters, which means Mary is one of the daughters. moving on to the next riddle ^goto(riddle2)  
+    
+proposal: %riddle2 What goes up and never comes down?
+    u1:(age) ^start(Stand/Gestures/Applause_1) That is correct, ^wait(Stand/Gestures/Applause_1) ^goto(guitar)  
+    u1:(hint) It is something that always increases with time, but it never decreases ^goto(riddle2) 
+    u1:(next) The answer to this riddle is age. One's age always goes up, but it never comes down ^goto(guitar) 
+
+proposal: %juggle Would you like to see me juggle?
+    u1:(~yes) ^start(Stand/Emotions/Positive/Happy_1) ^wait(Stand/Emotions/Positive/Happy_1) I am not the best at juggling, but I am pretty okay, I hope you enjoy this, ^run(Stand/Waiting/AirJuggle_1) ^wait(Stand/Waiting/AirJuggle_1) ^goto(taiChi) 
+    u1:(~no) Too bad, I was low key looking forward to showing off my juggling skills., Well, ^goto(taiChi)
+    
+proposal: %juggle Would you like to see me play the guitar?
+    u1:(~yes) ^start(Stand/Emotions/Positive/Happy_1) ^wait(Stand/Emotions/Positive/Happy_1) I am not the best at juggling, but I am pretty okay, I hope you enjoy this, ^start(Stand/Waiting/AirGuitar_1) ^wait(Stand/Waiting/AirGuitar_1) ^goto(taiChi) 
+    u1:(~no) Too bad, I was low key looking forward to showing off my guitar skills., Well, ^goto(taiChi)
+    
+proposal: %taiChi Would you like to see me dance? 
+    u1:(~yes) This dance is called the Tai Chi dance and I am very proud of it. Feel free to join me in the dance if you can $TaiChi=1 ^goto(sing)
+    u1:(~no) ^goto(sing)
+    
+proposal: %sing Would you like to sing twinkle twinkle litte star with me?
+    u1:(~yes) ^start(Stand/Emotions/Positive/Happy_1) ^wait(Stand/Emotions/Positive/Happy_1) I am so excited, this is my favourite rhyme all time! Sing along with me $twinkle=1  ^goto(count)
+    u1:(~no)  ^goto(count)
+    
+    
+proposal: %count Would you like to count with me?
+    u1:(~yes)  ^start(Stand/Emotions/Positive/Happy_1) ^wait(Stand/Emotions/Positive/Happy_1) Great! Let us count forwards from one to ten, one,two,three,four,five,six,seven,eight,nine,ten, ^start(Stand/Gestures/Applause_1) good job!  ^wait(Stand/Gestures/Applause_1) now let us count backwards from ten to one, ten,nine,eight,seven,six,five,four,three,two,one. ^goto(juggle)
+    u1:(~no) ^run(StandEmotionsNegativeSad_1) ^goto(juggle)
+    
+proposal: %picture ^start(Stand/Gestures/You_5) well, it was really nice to meet you and I hope you get well soon, may i take a picture of you before you leave? ^wait(Stand/Gestures/You_5)
+    u1:(~yes) ^start(Stand/Waiting/TakePicture_1) Okey Dokie,^wait(Stand/Waiting/TakePicture_1) I hope this would help me remember you if we meet again,. ^goto(bye)
+    u1:(~no) ^goto(bye)
+
+# On any proposal if user asks to repeat, say again the same proposal.
+u:(~repeat) I'll repeat for you. ^sameProposal
+
+# Being polite, the robot always answers accordingly to thankfull sentences.
+u:(~thx) You're welcome
+
+
+# Exiting.
+# Answering to Goodbye and exiting the dialog box, stimulating the onStopped output slot.
+u:(~bye) ~bye $onStopped=1
+
+
+# Responding to events.
+# Here, if the left foot bumper is pressed, the robot starts an animation,
+# say a text and waits for the end of the animation.
+u:(e:LeftBumperPressed) ^start(animations/Stand/Gestures/YouKnowWhat_1) My left foot bumped into something! ^wait(animations/Stand/Gestures/YouKnowWhat_1)
