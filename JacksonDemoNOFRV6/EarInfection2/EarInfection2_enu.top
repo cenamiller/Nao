@@ -1,0 +1,40 @@
+topic: ~EarInfection2()
+language: enu
+
+concept:(yes) [yes "all right" sure "why not" ok okey dokie certainly "very well" yep yea yup definitely amen yeah "you bet" "go ahead" okay]
+concept:(no) [no nope "don't want" "no way" never "not at all" nah pass]
+concept:(how) ["how are you" howdy "what's up" "how do you feel"]
+concept:(happy) [ok fine great happy blessed "all right" glad "not bad"]
+concept:(sad) [sad miserable bad unhappy tired "not good" "not fine" "not great" "been better" "not well" "not okay" "so so"]
+concept:(repeat) [repeat understand]
+concept:(thx) ["thank you" thanks gracias "much obliged" merci]
+concept:(hi) [hello hi hey "good morning" greetings]
+concept:(bye) [bye goodbye "bye bye" "tata" "see you" adios cheerio "so long" farewell "have a nice day"]
+concept:(younger) [one two three four five six seven]
+concept: (older) [eight nine ten eleven twelve thirteen fourteen fiveteen sixteen]
+concept:(unsure) ["I don't know" unsure "I guess"]
+
+
+u:(e:onStart) ^goto(check)
+
+proposal: %check  Have you been feeling well??
+    u1:(~yes) ^goto(FeelGood)
+    u1:(~no) ^goto(FeelBad)
+    u1:(~unsure) ^goto(FeelBad)
+    u1:(~sad) ^goto(FeelBad)
+
+proposal: %FeelBad I'm sorry to hear that, but I'm glad you came to see us.  ^goto(InitVisit)
+    
+proposal: %FeelGood That's great!  ^goto(InitVisit)
+
+
+proposal: %InitVisit The nurse and doctor are going to ask you some questions, and also check and listen to your body. Would you like to talk about what to expect on your visit?
+    u1:(~no) ^goto(NoDescrip)
+    u1:(~yes) ^goto(DescribeVisit)
+    u1:(~unsure) ^goto(DescribeVisit)
+
+proposal: %DescribeVisit For example, they might help you keep track of how you're growing by measuring your height and weight. They might also listen to your heart and lungs. It's very relaxing, just sit quietly so they can focus on the normal rhythms and sounds your body makes, and breathe deep when they tell you to. My favorite part is when they measure blood pressure. They inflate a soft sleeve around your arm. It might feel strange, but that's normal and it won't take long. ^goto(Question)
+
+proposal: %NoDescrip Okay! Just one more thing ^goto(Question)
+
+proposal: %Question Remember, the nurse and doctor help people with their bodies everyday. It's okay to ask them anything about your body or how you're feeling. In fact, they need your help to understand! $onStopped=1

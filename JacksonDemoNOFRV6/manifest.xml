@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<package uuid="jacksondemonofrv6-763c56">
+ <names>
+  <name lang="en_US">JacksonDemoNOFRV6</name>
+ </names>
+ <supportedLanguages>
+  <language>en_US</language>
+ </supportedLanguages>
+ <descriptionLanguages>
+  <language>en_US</language>
+ </descriptionLanguages>
+ <contents>
+  <behaviorContent path="behavior_1/Comfort Dialog">
+   <nature>interactive</nature>
+   <permissions/>
+  </behaviorContent>
+  <dialogContent typeVersion="1.0" topicName="EarInfection">
+   <topic path="EarInfection/EarInfection_enu.top" language="en_US"/>
+  </dialogContent>
+  <dialogContent typeVersion="1.0" topicName="ExampleDialog">
+   <topic path="behavior_1/Comfort Dialog/ExampleDialog/ExampleDialog_enu.top" language="en_US"/>
+  </dialogContent>
+  <dialogContent typeVersion="1.0" topicName="Comfort">
+   <topic path="Comfort/Comfort_enu.top" language="en_US"/>
+  </dialogContent>
+  <dialogContent typeVersion="1.0" topicName="EarInfection2">
+   <topic path="EarInfection2/EarInfection2_enu.top" language="en_US"/>
+  </dialogContent>
+ </contents>
+</package>
